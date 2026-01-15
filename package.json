@@ -1,0 +1,32 @@
+{
+  "name": "@bunnix/optimistics",
+  "version": "0.1.0",
+  "description": "Optimistic state control while external data loads, built for Bunnix",
+  "license": "ISC",
+  "author": "@bunnix",
+  "publishConfig": { "access": "public" },
+  "type": "module",
+  "main": "./index.mjs",
+  "module": "./index.mjs",
+  "types": "./@types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./@types/index.d.ts",
+      "import": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "src",
+    "@types"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@bunnix/redux": "^0.9.0"
+  },
+  "peerDependencies": {
+    "@bunnix/redux": "^0.9.0"
+  }
+}
