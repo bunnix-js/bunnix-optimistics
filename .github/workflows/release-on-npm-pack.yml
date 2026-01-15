@@ -1,20 +1,48 @@
-name: release-on-npm-pack
+name: Create Release on npm pack
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ['Publish to npm']
+    types: [completed]
+    branches: [main]
 
 jobs:
-  pack:
+  create-release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          node-version: "20"
-          cache: "npm"
-      - run: npm ci
-      - run: npm pack
-      - uses: actions/upload-artifact@v4
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Extract version from package.json
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "TAG=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: npm-pack
-          path: "*.tgz"
+          tag_name: ${{ steps.version.outputs.TAG }}
+          release_name: "Release ${{ steps.version.outputs.VERSION }}"
+          body: |
+            ## @bunnix/optimistics v${{ steps.version.outputs.VERSION }}
+
+            This release was automatically created after successful npm pack.
+
+            ### Installation
+            ```bash
+            npm install @bunnix/optimistics@${{ steps.version.outputs.VERSION }}
+            ```
+
+            For more information, see the [documentation](https://github.com/bunnix-js/bunnix-optimistics).
+          draft: false
+          prerelease: false
