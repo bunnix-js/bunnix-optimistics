@@ -1,6 +1,6 @@
 {
   "name": "@bunnix/optimistics",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Optimistic state control while external data loads, built for Bunnix",
   "license": "ISC",
   "author": "@bunnix",
